@@ -37,9 +37,23 @@ The environment is considered solved, when the average (over 100 episodes) of th
 
 2. Place the file in the DRLND GitHub repository, in the `p3_collab-compet/` folder, and unzip (or decompress) the file. 
 
+### Dependencies
+Create and activate the Conda(Version : 4.8.3) environment, Install dependencies from `requirements.txt` by
+  ```
+  conda create -n drlnd python=3.6
+  conda activate drlnd
+  pip install -r requirements.txt
+  ```  
+
 ### Instructions
 
 Follow the instructions in `Tennis.ipynb` to get started with training your own agent!  
+Note: You might need to create custom ipython kernel to select drlnd conda environment in the notebook.
+```
+python -m ipykernel install --user --name drlnd --display-name "drlnd"
+```
+
+In the project, Our agent learned from information such as its velocity, along with ray-based perception of objects around its forward direction. 
 
 ### (Optional) Challenge: Crawler Environment
 
