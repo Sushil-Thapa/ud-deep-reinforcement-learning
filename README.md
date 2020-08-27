@@ -8,6 +8,8 @@
 ![Trained Agents][image1]
 
 This repository contains material related to Udacity's [Deep Reinforcement Learning Nanodegree](https://www.udacity.com/course/deep-reinforcement-learning-nanodegree--nd893) program.  
+## Deep Reinforcement Learning Nanodegree Certificate
+![Certificate](CERTIFICATE.jpg)
 
 ## Table of Contents
 
