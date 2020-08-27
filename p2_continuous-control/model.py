@@ -4,10 +4,6 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-def hidden_init(layer):
-    fan_in = layer.weight.data.size()[0]
-    lim = 1. / np.sqrt(fan_in)
-    return (-lim, lim)
 
 class Actor(nn.Module):
     """Actor (Policy) Model."""
@@ -24,7 +20,7 @@ class Actor(nn.Module):
             fc3_units (int): Number of nodes in second hidden layer
         """
         super(Actor, self).__init__()
-        self.seed = torch.manual_seed(seed)
+        torch.manual_seed(seed)
         self.fc1 = nn.Linear(state_size, fc1_units)
         self.bn = nn.BatchNorm1d(state_size)
         self.fc2 = nn.Linear(fc1_units, fc2_units)
@@ -33,10 +29,17 @@ class Actor(nn.Module):
         self.fc4 = nn.Linear(fc3_units, action_size)
         self.reset_parameters()
 
+    def hidden_init(self, layer):
+        """Initialize the weights of hidden vector of `layer`"""
+        fan_in = layer.weight.data.size()[0]
+        lim = 1. / np.sqrt(fan_in)
+        return (-lim, lim)
+
     def reset_parameters(self):
-        self.fc1.weight.data.uniform_(*hidden_init(self.fc1))
-        self.fc2.weight.data.uniform_(*hidden_init(self.fc2))
-        self.fc3.weight.data.uniform_(*hidden_init(self.fc3))
+        """resets the parameters of all the layers in the network"""
+        self.fc1.weight.data.uniform_(*self.hidden_init(self.fc1))
+        self.fc2.weight.data.uniform_(*self.hidden_init(self.fc2))
+        self.fc3.weight.data.uniform_(*self.hidden_init(self.fc3))
         self.fc4.weight.data.uniform_(-3e-3, 3e-3)
 
     def forward(self, state):
@@ -62,7 +65,7 @@ class Critic(nn.Module):
             fc2_units (int): Number of nodes in the second hidden layer
         """
         super(Critic, self).__init__()
-        self.seed = torch.manual_seed(seed)
+        torch.manual_seed(seed)
         self.fcs1 = nn.Linear(state_size, fcs1_units)
         self.bn = nn.BatchNorm1d(state_size)
         self.dropout = nn.Dropout(0.1)
@@ -71,9 +74,16 @@ class Critic(nn.Module):
         self.fc3 = nn.Linear(fc2_units, 1)
         self.reset_parameters()
 
+    def hidden_init(self, layer):
+        """Initialize the weights of hidden vector of `layer`"""
+        fan_in = layer.weight.data.size()[0]
+        lim = 1. / np.sqrt(fan_in)
+        return (-lim, lim)
+
     def reset_parameters(self):
-        self.fcs1.weight.data.uniform_(*hidden_init(self.fcs1))
-        self.fc2.weight.data.uniform_(*hidden_init(self.fc2))
+        """resets the parameters of all the layers in the network"""
+        self.fcs1.weight.data.uniform_(*self.hidden_init(self.fcs1))
+        self.fc2.weight.data.uniform_(*self.hidden_init(self.fc2))
         self.fc3.weight.data.uniform_(-3e-3, 3e-3)
 
     def forward(self, state, action):

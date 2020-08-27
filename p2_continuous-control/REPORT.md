@@ -97,3 +97,5 @@ Environment solved in 318 episodes!  	|	Average Score: 30.39
 ## Future Work
 - [x] Artificial Neural Network based search for DDPGs 
 - [ ] Hyperparameter search for DDPGs and adding convolutional architecture or using batch normalization should lead to better performance. 
+- [ ] Prioritized Experience Replay and Hindsight Experience Replay
+- [ ] Experimenting with Different agents: D4PG, PPO, TD3, SAC, PlanNet and Dreamer.

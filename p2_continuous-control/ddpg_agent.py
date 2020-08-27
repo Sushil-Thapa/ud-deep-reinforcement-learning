@@ -11,7 +11,7 @@ import torch.optim as optim
 from hyperparameters import *
 
 
-class Agent():
+class Agent(object):
     """Interacts with and learns from the environment."""
     
     def __init__(self, state_size, action_size, random_seed):
@@ -25,7 +25,8 @@ class Agent():
         """
         self.state_size = state_size
         self.action_size = action_size
-        self.seed = random.seed(random_seed)
+        random.seed(random_seed)
+        np.random.seed(random_seed)
 
         # Actor Network (w/ Target Network)
         self.actor_local = Actor(state_size, action_size, random_seed).to(device)
@@ -65,6 +66,7 @@ class Agent():
         return np.clip(action, -1, 1)
 
     def reset(self):
+        """Reset the internal state of noise."""
         self.noise.reset()
 
     def learn(self, experiences, gamma):
@@ -123,7 +125,7 @@ class Agent():
         for target_param, local_param in zip(target_model.parameters(), local_model.parameters()):
             target_param.data.copy_(tau*local_param.data + (1.0-tau)*target_param.data)
 
-class OUNoise:
+class OUNoise(object):
     """Ornstein-Uhlenbeck process."""
 
     def __init__(self, size, seed, mu=0., theta=0.15, sigma=0.2):
@@ -131,7 +133,8 @@ class OUNoise:
         self.mu = mu * np.ones(size)
         self.theta = theta
         self.sigma = sigma
-        self.seed = random.seed(seed)
+        random.seed(seed)
+        np.random.seed(seed)
         self.reset()
 
     def reset(self):
@@ -141,11 +144,11 @@ class OUNoise:
     def sample(self):
         """Update internal state and return it as a noise sample."""
         x = self.state
-        dx = self.theta * (self.mu - x) + self.sigma * np.array([random.random() for i in range(len(x))])
+        dx = self.theta * (self.mu - x) + self.sigma * np.array([np.random.randn() for i in range(len(x))])
         self.state = x + dx
         return self.state
 
-class ReplayBuffer:
+class ReplayBuffer(object):
     """Fixed-size buffer to store experience tuples."""
 
     def __init__(self, action_size, buffer_size, batch_size, seed):
@@ -159,7 +162,7 @@ class ReplayBuffer:
         self.memory = deque(maxlen=buffer_size)  # internal memory (deque)
         self.batch_size = batch_size
         self.experience = namedtuple("Experience", field_names=["state", "action", "reward", "next_state", "done"])
-        self.seed = random.seed(seed)
+        self.seed = seed
     
     def add(self, state, action, reward, next_state, done):
         """Add a new experience to memory."""
@@ -168,6 +171,7 @@ class ReplayBuffer:
     
     def sample(self):
         """Randomly sample a batch of experiences from memory."""
+        random.seed(self.seed)
         experiences = random.sample(self.memory, k=self.batch_size)
 
         states = torch.from_numpy(np.vstack([e.state for e in experiences if e is not None])).float().to(device)
